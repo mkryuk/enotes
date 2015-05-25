@@ -17,10 +17,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
+//for browsing static files in public directory
+app.use(express.static(__dirname + '/public'));
+
 var api = require('./app/routes/api')(app, express);
 app.use('/api', api);
 
-app.get('/test', function (req, res) {
+app.get('*', function (req, res) {
+    console.log("get func "+ __dirname);
     res.sendFile(__dirname + '/public/views/index.html');
 });
 

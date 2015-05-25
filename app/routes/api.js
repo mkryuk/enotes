@@ -1,12 +1,13 @@
 var User = require('../models/user');
+var Story = require('../models/story');
 var config = require('../../config');
 var secretKey = config.secretKey;
-var jsonWebToken = require('jsonwebtoken');
+var jsonwebtoken = require('jsonwebtoken');
 
 
 var createToken = function (user) {
-    var token = jsonWebToken.sign({
-        _id: user._id,
+    var token = jsonwebtoken.sign({
+        id: user._id,
         name: user.name,
         username: user.username
     }, secretKey, {
@@ -48,7 +49,7 @@ module.exports = function (app, express) {
     api.post('/login', function (req, res) {
         User.findOne({
             username: req.body.username
-        }).select('password').exec(function (err, user) {
+        }).select('name username password').exec(function (err, user) {
             if (err) throw err;
             if (!user) {
                 res.send({message: "User doesn't exist"});
@@ -68,6 +69,58 @@ module.exports = function (app, express) {
             }
         });
     });
+
+    //Middleware for check login token
+    api.use(function (req, res, next) {
+        console.log("User logged in");
+        var token = req.body.token || req.params.token || req.headers['x-access-token'];
+
+        //check if token exist
+        if (token) {
+            jsonwebtoken.verify(token, secretKey, function (err, decoded) {
+                if (err) {
+                    res.status(403).send({success: false, message: "Failed to authenticate user"});
+                } else {
+                    req.decoded = decoded;
+                    next();
+                }
+            });
+        } else {
+            res.status(403).send({success: false, message: "No token provided"});
+        }
+    });
+
+    //Bellow here authorized methods only
+
+    //Chaining the route methods
+    api.route('/')
+        .post(function (req, res) {
+            var story = new Story({
+                creator: req.decoded.id,
+                content: req.body.content
+            });
+            story.save(function (err) {
+                if (err) {
+                    res.send(err);
+                    return;
+                }
+                res.json({message: 'New story created'});
+            });
+        })
+        .get(function (req, res) {
+            Story.find({creator:req.decoded.id}, function (err, stories) {
+                if (err) {
+                    res.send(err);
+                    return;
+                }
+                res.json(stories);
+            });
+        });
+
+    api.get('/me', function (req, res) {
+        res.json(req.decoded);
+    })
+
 
     return api;
 };
