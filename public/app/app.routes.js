@@ -18,13 +18,12 @@ angular.module('appRoutes', ['ngRoute'])
             .when('/allstories', {
                 templateUrl: 'app/views/pages/allStories.html',
                 controller: 'AllStoriesController',
-                controllerAs: 'story'//,
-                //resolve: {
-                //    stories: function (Story) {
-                //        console.log(Story.allStories());
-                //        return Story.allStories();
-                //    }
-                //}
+                controllerAs: 'story',
+                resolve: {
+                    stories: function (Story) {
+                        return Story.allStories();
+                    }
+                }
             })
             .otherwise({templateUrl: 'app/views/pages/404.html'});
 
