@@ -16,10 +16,9 @@ mongoose.connect(config.db, function (err) {
 });
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(morgan('dev'));
-
 //for browsing static files in public directory
 app.use(express.static(__dirname + '/public'));
+app.use(morgan('dev'));
 
 var api = require('./app/routes/api')(app, express, io);
 app.use('/api', api);

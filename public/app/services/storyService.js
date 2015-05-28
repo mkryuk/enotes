@@ -3,16 +3,19 @@ angular.module('storyService', [])
         var storyFactory = {};
 
         storyFactory.create = function (storyData) {
-            return $http.post('/api', storyData);
+            return $http.post('/api/stories/', storyData);
         };
 
         storyFactory.getStories = function () {
-            return $http.get('/api');
+            return $http.get('/api/stories/');
         };
 
         storyFactory.allStories = function () {
-            console.log("allStories");
-            return $http.get('/api/all_stories');
+            return $http.get('/api/all_stories/');
+        };
+
+        storyFactory.delete = function (storyId) {
+            return $http.delete('/api/stories/' + storyId);
         };
 
         return storyFactory;

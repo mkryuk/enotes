@@ -25,8 +25,13 @@
             </div>
             <div class="panel panel-success">
                 <div class="panel-heading">Your story</div>
-                <div class="panel-body" ng-repeat="story in story.stories | reverse">
-                    <p>{{story.content}}</p>
+                <div class="panel-body" ng-repeat="item in story.stories | reverse">
+                    <div>
+                        <a class="pull-right btn btn-danger btn-xs" href="#" ng-click="story.deleteStory(item._id)"><span
+                                class="text-right glyphicon glyphicon-remove"></span></a>
+                        <div class="pull-left">{{item.content}}</div>
+                        <hr/>
+                    </div>
                 </div>
             </div>
         </div>

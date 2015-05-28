@@ -9,19 +9,24 @@ angular.module('appRoutes', ['ngRoute'])
             .when('/login', {
                 templateUrl: 'app/views/pages/login.html'
             })
+            .when('/logout', {
+                templateUrl: 'app/views/pages/home.html'
+            })
             .when('/signup', {
                 templateUrl: 'app/views/pages/signup.html'
             })
             .when('/allstories', {
                 templateUrl: 'app/views/pages/allStories.html',
                 controller: 'AllStoriesController',
-                controllerAs: 'story',
-                resolve: {
-                    stories: function (Story) {
-                        return Story.allStories();
-                    }
-                }
-            });
+                controllerAs: 'story'//,
+                //resolve: {
+                //    stories: function (Story) {
+                //        console.log(Story.allStories());
+                //        return Story.allStories();
+                //    }
+                //}
+            })
+            .otherwise({templateUrl: 'app/views/pages/404.html'});
 
 
         $locationProvider.html5Mode(true);

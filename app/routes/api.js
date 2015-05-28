@@ -21,13 +21,13 @@ module.exports = function (app, express, io) {
     var api = express.Router()
 
     api.get('/all_stories', function (req, res) {
-       Story.find({}, function (err, stories) {
-           if (err) {
-               res.send(err);
-               return;
-           }
-           res.json(stories);
-       });
+        Story.find({}, function (err, stories) {
+            if (err) {
+                res.send(err);
+                return;
+            }
+            res.json(stories);
+        });
     });
 
     api.post('/signup', function (req, res) {
@@ -52,15 +52,15 @@ module.exports = function (app, express, io) {
         });
     });
 
-    api.get('/users', function (req, res) {
-        User.find({}, function (err, users) {
-            if (err) {
-                res.send(err);
-                return;
-            }
-            res.json(users);
-        });
-    });
+    //api.get('/users', function (req, res) {
+    //    User.find({}, function (err, users) {
+    //        if (err) {
+    //            res.send(err);
+    //            return;
+    //        }
+    //        res.json(users);
+    //    });
+    //});
 
     api.post('/login', function (req, res) {
         User.findOne({
@@ -108,8 +108,8 @@ module.exports = function (app, express, io) {
 
     //Bellow here authorized methods only
 
-    //Chaining the route methods
-    api.route('/')
+    //Chaining the route /stories methods
+    api.route('/stories')
         .post(function (req, res) {
             var story = new Story({
                 creator: req.decoded.id,
@@ -132,6 +132,25 @@ module.exports = function (app, express, io) {
                     return;
                 }
                 res.json(stories);
+            });
+        });
+
+    api.route('/stories/:story_id')
+        .delete(function (req, res) {
+            var item = Story.findOne({_id: req.params.story_id}, function (err, data) {
+                if (err) {
+                    res.send(err);
+                    return;
+                }
+                //if we found the item
+                if (data) {
+                    data.remove();
+                    res.json({message: "item " + req.params.story_id + " removed"});
+                    io.emit('story_deleted', req.params.story_id);
+                }
+                else {
+                    res.json({message: "item not found"});
+                }
             });
         });
 

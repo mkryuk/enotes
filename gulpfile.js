@@ -6,7 +6,7 @@ gulp.task("default", function () {
         script: "app.js",
         ext: "js",
         env: {PORT: 8080},
-        ignore: ['./node_modules/**']
+        ignore: ['./node_modules/**', './public/']
     })
         .on('restart', function () {
             console.log("restarted from gulp")
