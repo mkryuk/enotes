@@ -46,5 +46,13 @@ function AllStoriesController(stories, Socketio) {
     Socketio.on('story', function (data) {
         vm.stories.push(data);
     });
+
+    Socketio.on('story_deleted', function (id) {
+        vm.stories.forEach(function (elem, index, array) {
+            if (elem._id == id) {
+                array.splice(index, 1);
+            }
+        });
+    });
 }
 

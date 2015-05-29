@@ -2,9 +2,9 @@
   "name": "enotes",
   "version": "1.0.0",
   "description": "This is a simple notes with translation description and tags for search",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./test/helpers/test.js"
   },
   "keywords": [
     "notes",
@@ -22,5 +22,10 @@
     "mongoose": "^4.0.3",
     "morgan": "^1.5.3",
     "socket.io": "^1.3.5"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.5",
+    "should": "^6.0.3",
+    "supertest": "^1.0.1"
   }
 }

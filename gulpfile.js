@@ -3,9 +3,9 @@ var gulp = require("gulp"),
 
 gulp.task("default", function () {
     nodemon({
-        script: "app.js",
+        script: "server.js",
         ext: "js",
-        env: {PORT: 8080},
+        env: {PORT: 8080, SSLPORT: 8443},
         ignore: ['./node_modules/**', './public/']
     })
         .on('restart', function () {
