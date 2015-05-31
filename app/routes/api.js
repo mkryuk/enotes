@@ -23,6 +23,7 @@ module.exports = function (app, express, io) {
 
     //TODO export this to separate middleware
     //Middleware for check login token
+
     api.use(function (req, res, next) {
         var token = req.body.token || req.params.token || req.headers['x-access-token'];
 

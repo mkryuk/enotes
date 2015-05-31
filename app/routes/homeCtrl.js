@@ -4,8 +4,18 @@ var jsonwebtoken = require('jsonwebtoken');
 var config = require('../../config');
 var secretKey = config.secretKey;
 
+
+var homeController = {
+    createToken: createToken,
+    getAllStories: getAllStories,
+    signup: signup,
+    login: login
+};
+
+module.exports = homeController;
+
 //Create authorization token
-createToken = function (user) {
+function createToken(user) {
     var token = jsonwebtoken.sign({
         id: user._id,
         name: user.name,
@@ -14,12 +24,11 @@ createToken = function (user) {
         expiresInMinutes: 1440
     });
     return token;
-};
+}
 
-var homeController = {};
 
 //GET /api/all_stories List all stories
-homeController.getAllStories = function (req, res) {
+function getAllStories(req, res) {
     Story.find({}, function (err, stories) {
         if (err) {
             res.send(err);
@@ -27,10 +36,10 @@ homeController.getAllStories = function (req, res) {
         }
         res.json(stories);
     });
-};
+}
 
 //POST /api/signup signup user
-homeController.signup = function (req, res) {
+function signup(req, res) {
     var user = new User({
         name: req.body.name,
         username: req.body.username,
@@ -50,10 +59,10 @@ homeController.signup = function (req, res) {
             token: token
         });
     });
-};
+}
 
 //POST /api/login Login user
-homeController.login = function (req, res) {
+function login(req, res) {
     User.findOne({
         username: req.body.username
     }).select('name username password').exec(function (err, user) {
@@ -75,6 +84,4 @@ homeController.login = function (req, res) {
             }
         }
     });
-};
-
-module.exports = homeController;
+}
