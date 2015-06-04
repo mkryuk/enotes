@@ -4,7 +4,7 @@ var jsonwebtoken = require('jsonwebtoken');
 var config = require('../../config');
 var secretKey = config.secretKey;
 
-
+//Exported functions
 var homeController = {
     createToken: createToken,
     getAllStories: getAllStories,

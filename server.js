@@ -23,8 +23,8 @@ httpapp.get('*',function(req,res){
     res.redirect('https://localhost:'+config.sslPort+req.url);
 });
 
-//init socket.io
-app.init(io);
+//init database and socket.io
+app.init(config.db, io);
 
 http.listen(config.port, function (err) {
     if (err) {

@@ -1,8 +1,6 @@
-var User = require('../models/user');
-var Story = require('../models/story');
-var config = require('../../config');
-var secretKey = config.secretKey;
-var jsonwebtoken = require('jsonwebtoken');
+var User = require('../models/user'),
+    Story = require('../models/story'),
+    authToken = require('../modules/authentication');
 
 
 module.exports = function (app, express, io) {
@@ -12,7 +10,7 @@ module.exports = function (app, express, io) {
     var homeController = require('./homeCtrl');
     //home controller//
     //GET List all stories
-    api.get('/all_stories', homeController.getAllStories);
+    //api.get('/all_stories', homeController.getAllStories);
 
     //POST signup user
     api.post('/signup', homeController.signup);
@@ -21,27 +19,8 @@ module.exports = function (app, express, io) {
     api.post('/login', homeController.login);
     //END of homeController//
 
-    //TODO export this to separate middleware
     //Middleware for check login token
-
-    api.use(function (req, res, next) {
-        var token = req.body.token || req.params.token || req.headers['x-access-token'];
-
-        //check if token exist
-        if (token) {
-            jsonwebtoken.verify(token, secretKey, function (err, decoded) {
-                if (err) {
-                    res.status(403).send({success: false, message: "Failed to authenticate user"});
-                } else {
-                    req.decoded = decoded;
-                    next();
-                }
-            });
-        } else {
-            res.status(403).send({success: false, message: "No token provided"});
-        }
-    });
-
+    api.use(authToken);
     //Bellow here authorized methods only
 
 
@@ -65,6 +44,15 @@ module.exports = function (app, express, io) {
         //POST /api/stories/{id} return method not allowed
         .post(storiesController.notAllowed);
     //END of storiesController//
+
+    //
+    var notesController = require('./notesCtrl')(io);
+    api.route('/notes')
+        //POST /api/notes create new note
+        .post(notesController.createNewNote);
+    //
+    api.route('/notes/:noteId')
+        .delete(notesController.deleteUserNote);
 
     api.get('/me', function (req, res) {
         res.json(req.decoded);

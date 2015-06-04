@@ -8,12 +8,12 @@ var app = express();
 
 module.exports = function () {
 
-    app.init = function(io){
-        mongoose.connect(config.db, function (err) {
+    app.init = function(db, io){
+        mongoose.connect(db, function (err) {
             if (err) {
                 console.log(err);
             } else {
-                console.log("connected to " + config.db);
+                console.log("connected to " + db);
             }
         });
         app.use(bodyParser.urlencoded({extended: true}));
@@ -23,7 +23,6 @@ module.exports = function () {
         app.use(morgan('dev'));
         var api = require('./routes/api')(app, express, io);
         app.use('/api', api);
-
 
         //route any other requests to index.html
         app.get('*', function (req, res) {

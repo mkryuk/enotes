@@ -1,5 +1,6 @@
 module.exports = {
-    db: process.env.TESTDB || "mongodb://localhost/test",
+    db: "mongodb://localhost/notes",
+    testDb: process.env.TESTDB || "mongodb://localhost/test",
     port: process.env.PORT || 8000,
     sslPort: process.env.SSLPORT || 8003,
     secretKey: "mySuperPuperSecretKey123",
