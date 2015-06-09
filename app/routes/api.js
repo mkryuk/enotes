@@ -45,19 +45,30 @@ module.exports = function (app, express, io) {
         .post(storiesController.notAllowed);
     //END of storiesController//
 
-    //
+    //notesController//
     var notesController = require('./notesCtrl')(io);
+
     api.route('/notes')
         //POST /api/notes create new note
-        .post(notesController.createNewNote);
-    //
+        .post(notesController.createNewNote)
+        //GET /api/notes get all user notes
+        .get(notesController.getAllUserNotes)
+        //DELETE /api/notes delete all user notes
+        .delete(notesController.deleteAllUserNotes);
+
     api.route('/notes/:noteId')
-        .delete(notesController.deleteUserNote);
+        //GET /api/notes/noteId get user note by id
+        .get(notesController.getUserNoteById)
+        //DELETE /api/notes/noteId delete user note by id
+        .delete(notesController.deleteUserNote)
+        //PUT /api/notes/noteId update user note by id
+        .put(notesController.updateUserNoteById);
+
+    //END of notesController//
 
     api.get('/me', function (req, res) {
         res.json(req.decoded);
     });
-
 
     return api;
 };

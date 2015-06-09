@@ -71,7 +71,8 @@ var addNote = function (user, note, next) {
 };
 
 
-describe('managing notes', function () {
+describe('CRUD for notes', function () {
+
     describe('POST /api/notes', function () {
         it("should create new note", function (done) {
             supertest(app)
@@ -102,8 +103,52 @@ describe('managing notes', function () {
         });
 
     });
-    describe('POST /api/notes/noteId', function () {
-        it("should delete user note by id", function (done) {
+
+    describe('GET /api/notes', function () {
+        it("should return all user notes", function (done) {
+            supertest(app)
+                .get("/api/notes")
+                .set('Content-Type', 'application/json')
+                .set('x-access-token', testData.token)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) return done(err);
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/notes/noteId', function () {
+        it("should get user note by id", function (done) {
+            supertest(app)
+                .get("/api/notes/" + testData.userNote._id)
+                .set('Content-Type', 'application/json')
+                .set('x-access-token', testData.token)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) return done(err);
+                    done();
+                });
+        });
+    });
+
+    describe('PUT /api/notes/noteId', function () {
+        it("should update user note by id", function (done) {
+            supertest(app)
+                .put("/api/notes/" + testData.userNote._id)
+                .set('Content-Type', 'application/json')
+                .set('x-access-token', testData.token)
+                .expect(200)
+                .end(function (err, res) {
+                    assert.equal(res.body.success, "true", "success should be true");
+                    if (err) return done(err);
+                    done();
+                });
+        });
+    });
+
+    describe('DELETE /api/notes/noteId', function () {
+        it("should delete user note by id and return {success:'true'}", function (done) {
             supertest(app)
                 .del("/api/notes/" + testData.userNote._id)
                 .set('Content-Type', 'application/json')
@@ -116,9 +161,19 @@ describe('managing notes', function () {
                 });
         });
     });
-    it("should delete all user notes");
-    it("should modify data in note by id");
-    it("should modify translation in note by id");
-    it("should modify description in note by id");
-    it("should modify tags in note by id");
+
+    describe('DELETE /api/notes/', function () {
+        it("should delete all user notes", function (done) {
+            supertest(app)
+                .del("/api/notes/")
+                .set('Content-Type', 'application/json')
+                .set('x-access-token', testData.token)
+                .expect(200)
+                .end(function (err, res) {
+                    assert.equal(res.body.success, "true", "success should be true");
+                    if (err) return done(err);
+                    done();
+                });
+        });
+    });
 });
