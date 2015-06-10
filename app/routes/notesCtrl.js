@@ -42,35 +42,71 @@ var notesController = function (io) {
         var query = {creator: req.decoded.id};
         var offset = req.query.offset || 0;//default offset is 0
         var limit = req.query.limit || 20;//default limit is 20
+        var tags = [];
         if (req.query.tags) {
-            var tags = [];
-            Array.isArray(req.query.tags) ? tags = req.query.tags : tags.push(req.query.tags);
+            if (Array.isArray(req.query.tags))
+                tags = req.query.tags;
+            else
+                tags.push(req.query.tags);
             query = {creator: req.decoded.id, $and: [{"tags": {$in: tags}}]};
         }
-        console.log(req.query);
-        Note.find(query, null, {skip: offset, limit: limit}, function (err, data) {
-            if (err) {
-                res.send(err);
-                return;
-            }
-            var notes = [];
-            data.forEach(function (item) {
-                var note = {
-                    id: item._id,
-                    creator: item.creator,
-                    data: item.data,
-                    translation: item.translation,
-                    description: item.description,
-                    tags: item.tags,
-                    href: "/api/notes/" + item._id
-                };
-                notes.push(note);
+
+        Note.find(query)
+            .skip(offset)
+            .limit(limit)
+            .exec(function (err, data) {
+                if (err) {
+                    res.send(err);
+                    return;
+                }
+                Note.count(query, function (err, totalCount) {
+                    var notes = [];
+                    data.forEach(function (item) {
+                        var note = {
+                            id: item._id,
+                            creator: item.creator,
+                            data: item.data,
+                            translation: item.translation,
+                            description: item.description,
+                            tags: item.tags,
+                            href: "/api/notes/" + item._id
+                        };
+                        notes.push(note);
+                    });
+
+                    function createLinks() {
+                        var uri = '/api/notes';
+                        var tagsQuery = "";
+                        tags.forEach(function (item) {
+                            tagsQuery += "tags=" + item + "&";
+                        });
+                        //TODO correct this links
+                        var first = uri + '?' + tagsQuery + 'offset=' + 0 + '&limit=' + limit;
+                        var prev = offset != '0' ? uri + '?' + tagsQuery + 'offset=' + offset - limit + '&limit=' + limit : "";
+                        var next = parseInt(offset + limit) < totalCount ? uri + '?' + tagsQuery + 'offset=' + parseInt(offset + limit) + '&limit=' + limit : "";
+                        var last = uri + '?' + tagsQuery + 'offset=' + (totalCount - limit > 0) ? (totalCount - limit) : 0 + '&limit=' + limit;
+
+                        return {
+                            first:first,
+                            prev: prev,
+                            next:next,
+                            last:last
+                        };
+                    }
+
+                    //Adding X-Total-Count of notes
+                    res.append('X-Total-Count', totalCount);
+
+                    var result = {
+                        links: createLinks(),
+                        notes: notes
+                    };
+
+                    res.json(result);
+                });
             });
-            //TODO Add X-Total-Count header
-            //TODO Add Link header
-            res.json(notes);
-        });
     }
+
 
     //DELETE /api/notes delete all user notes
     function deleteAllUserNotes(req, res) {
@@ -147,7 +183,6 @@ var notesController = function (io) {
             },
             function (err, response) {
                 if (err) {
-                    console.log(err);
                     res.send(err);
                     return;
                 }

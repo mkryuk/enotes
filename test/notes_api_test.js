@@ -128,7 +128,7 @@ describe('CRUD for notes', function () {
                 .end(function (err, res) {
                     if (err) return done(err);
                     //it should be 2 items in test response
-                    assert.equal(res.body.length, 2);
+                    assert.equal(res.body.notes.length, 2);
                     done();
                 });
         });
