@@ -36,8 +36,19 @@ var notesController = function (io) {
     }
 
     //GET /api/notes get all user notes
+    //GET /api/notes?tags=1&tags=2 get all user notes where tags contains 1 or 2
+    //GET /api/notes?tags=1&tags=2&offset=1&limit=2 get all user notes where tags contains 1 or 2 skip 1 limit 2
     function getAllUserNotes(req, res) {
-        Note.find({creator: req.decoded.id}, function (err, data) {
+        var query = {creator: req.decoded.id};
+        var offset = req.query.offset || 0;//default offset is 0
+        var limit = req.query.limit || 20;//default limit is 20
+        if (req.query.tags) {
+            var tags = [];
+            Array.isArray(req.query.tags) ? tags = req.query.tags : tags.push(req.query.tags);
+            query = {creator: req.decoded.id, $and: [{"tags": {$in: tags}}]};
+        }
+        console.log(req.query);
+        Note.find(query, null, {skip: offset, limit: limit}, function (err, data) {
             if (err) {
                 res.send(err);
                 return;
@@ -55,6 +66,8 @@ var notesController = function (io) {
                 };
                 notes.push(note);
             });
+            //TODO Add X-Total-Count header
+            //TODO Add Link header
             res.json(notes);
         });
     }

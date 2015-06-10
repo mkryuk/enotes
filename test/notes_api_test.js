@@ -118,6 +118,22 @@ describe('CRUD for notes', function () {
         });
     });
 
+    describe('GET /api/notes?tags=1&tags=testTag2', function () {
+        it("should get all notes where tags contains 1 or 2", function (done) {
+            supertest(app)
+                .get("/api/notes?tags=1&tags=testTag2")
+                .set('Content-Type', 'application/json')
+                .set('x-access-token', testData.token)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) return done(err);
+                    //it should be 2 items in test response
+                    assert.equal(res.body.length, 2);
+                    done();
+                });
+        });
+    });
+
     describe('GET /api/notes/noteId', function () {
         it("should get user note by id", function (done) {
             supertest(app)
@@ -176,4 +192,5 @@ describe('CRUD for notes', function () {
                 });
         });
     });
+
 });
