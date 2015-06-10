@@ -40,8 +40,9 @@ var notesController = function (io) {
     //GET /api/notes?tags=1&tags=2&offset=1&limit=2 get all user notes where tags contains 1 or 2 skip 1 limit 2
     function getAllUserNotes(req, res) {
         var query = {creator: req.decoded.id};
-        var offset = req.query.offset || 0;//default offset is 0
-        var limit = req.query.limit || 20;//default limit is 20
+        //Math.abs to prevent the negative values
+        var offset = Math.abs(parseInt(req.query.offset, 10)) || 0;//default offset is 0
+        var limit = Math.abs(parseInt(req.query.limit, 10)) || 20;//default limit is 20
         var tags = [];
         if (req.query.tags) {
             if (Array.isArray(req.query.tags))
@@ -80,17 +81,39 @@ var notesController = function (io) {
                         tags.forEach(function (item) {
                             tagsQuery += "tags=" + item + "&";
                         });
-                        //TODO correct this links
+                        //TODO don't like this shit, need to be corrected
                         var first = uri + '?' + tagsQuery + 'offset=' + 0 + '&limit=' + limit;
-                        var prev = offset != '0' ? uri + '?' + tagsQuery + 'offset=' + offset - limit + '&limit=' + limit : "";
-                        var next = parseInt(offset + limit) < totalCount ? uri + '?' + tagsQuery + 'offset=' + parseInt(offset + limit) + '&limit=' + limit : "";
-                        var last = uri + '?' + tagsQuery + 'offset=' + (totalCount - limit > 0) ? (totalCount - limit) : 0 + '&limit=' + limit;
+                        //if offset > 0 then
+                        var prev = offset > 0 ?
+                            //add tags to uri
+                        uri + '?' + tagsQuery
+                            //add offset to uri
+                        + 'offset=' + (offset - limit > 0 ? offset - limit : 0)
+                            //add limit to uri
+                        + '&limit=' + limit
+                            //otherwise prev link is null
+                            : null;
+                        //if there is some notes forward
+                        var next = (offset + limit) < totalCount ?
+                            //add tags to uri
+                        uri + '?' + tagsQuery
+                            //add offset
+                        + 'offset=' + (offset + limit)
+                            //add limit
+                        + '&limit=' + limit
+                            //otherwise next is null
+                            : null;
+                        var last = (offset + limit) < totalCount ?
+                            uri + '?' + tagsQuery
+                        + 'offset=' + (totalCount - limit)
+                        + '&limit=' + limit
+                            : null;
 
                         return {
-                            first:first,
+                            first: first,
                             prev: prev,
-                            next:next,
-                            last:last
+                            next: next,
+                            last: last
                         };
                     }
 
