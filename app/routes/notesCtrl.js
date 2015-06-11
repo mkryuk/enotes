@@ -80,7 +80,7 @@ var notesController = function (io) {
                         var qs = require('querystring'),
                             baseUrl = '/api/notes';
 
-                        var tagsString = qs.stringify({tags:tags});
+                        var tagsString = qs.stringify({tags: tags});
 
                         var first = null,
                             prev = null,
@@ -88,13 +88,21 @@ var notesController = function (io) {
                             last = null;
 
                         if (offset > 0) {
-                            first = baseUrl+"?"+tagsString+"&offset=0&limit="+limit;
-                            prev = baseUrl+"?"+tagsString+"&offset="+((offset - limit) > 0 ? offset - limit : 0)+"&limit="+limit;
+                            first = baseUrl + "?" + qs.stringify({tags: tags, offset: 0, limit: limit});
+                            prev = baseUrl + "?" + qs.stringify({
+                                tags: tags,
+                                offset: ((offset - limit) > 0 ? offset - limit : 0),
+                                limit: limit
+                            });
                         }
 
                         if (offset + limit < totalCount) {
-                            next = baseUrl+"?"+tagsString+"&offset="+(offset + limit)+"&limit="+limit;
-                            last = baseUrl+"?"+tagsString+"&offset="+(totalCount - limit)+"&limit="+limit;
+                            next = baseUrl + "?" + qs.stringify({tags: tags, offset: (offset + limit), limit: limit});
+                            last = baseUrl + "?" + qs.stringify({
+                                tags: tags,
+                                offset: (totalCount - limit),
+                                limit: limit
+                            });
                         }
 
                         return {
