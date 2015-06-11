@@ -1,4 +1,5 @@
 var Note = require("../models/note");
+
 var notesController = function (io) {
     var controller = {
         createNewNote: createNewNote,
@@ -76,38 +77,25 @@ var notesController = function (io) {
                     });
 
                     function createLinks() {
-                        var uri = '/api/notes';
-                        var tagsQuery = "";
-                        tags.forEach(function (item) {
-                            tagsQuery += "tags=" + item + "&";
-                        });
-                        //TODO don't like this shit, need to be corrected
-                        var first = uri + '?' + tagsQuery + 'offset=' + 0 + '&limit=' + limit;
-                        //if offset > 0 then
-                        var prev = offset > 0 ?
-                            //add tags to uri
-                        uri + '?' + tagsQuery
-                            //add offset to uri
-                        + 'offset=' + (offset - limit > 0 ? offset - limit : 0)
-                            //add limit to uri
-                        + '&limit=' + limit
-                            //otherwise prev link is null
-                            : null;
-                        //if there is some notes forward
-                        var next = (offset + limit) < totalCount ?
-                            //add tags to uri
-                        uri + '?' + tagsQuery
-                            //add offset
-                        + 'offset=' + (offset + limit)
-                            //add limit
-                        + '&limit=' + limit
-                            //otherwise next is null
-                            : null;
-                        var last = (offset + limit) < totalCount ?
-                            uri + '?' + tagsQuery
-                        + 'offset=' + (totalCount - limit)
-                        + '&limit=' + limit
-                            : null;
+                        var qs = require('querystring'),
+                            baseUrl = '/api/notes';
+
+                        var tagsString = qs.stringify({tags:tags});
+
+                        var first = null,
+                            prev = null,
+                            next = null,
+                            last = null;
+
+                        if (offset > 0) {
+                            first = baseUrl+"?"+tagsString+"&offset=0&limit="+limit;
+                            prev = baseUrl+"?"+tagsString+"&offset="+((offset - limit) > 0 ? offset - limit : 0)+"&limit="+limit;
+                        }
+
+                        if (offset + limit < totalCount) {
+                            next = baseUrl+"?"+tagsString+"&offset="+(offset + limit)+"&limit="+limit;
+                            last = baseUrl+"?"+tagsString+"&offset="+(totalCount - limit)+"&limit="+limit;
+                        }
 
                         return {
                             first: first,
