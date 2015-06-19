@@ -1,15 +1,15 @@
 angular.module('userCtrl', ['userService'])
-    .controller('UserController', ['User', UserController])
+    //.controller('UserController', ['User', UserController])
     .controller('UserCreateController', ['User', '$location', '$window', UserCreateController]);
 
-function UserController(User)
-{
-    var vm = this;
-    User.all()
-        .success(function (data) {
-            vm.users = data;
-        });
-}
+//function UserController(User)
+//{
+//    var vm = this;
+//    //User.all()
+//    //    .success(function (data) {
+//    //        vm.users = data;
+//    //    });
+//}
 
 function UserCreateController(User, $location, $window) {
     var vm = this;

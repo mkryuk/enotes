@@ -3,7 +3,7 @@ angular.module('storyCtrl', ['storyService'])
     .controller('AllStoriesController', ['stories', 'Socketio', AllStoriesController]);
 
 function StoryController(Story, Socketio) {
-    vm = this;
+    var vm = this;
     vm.storyData = '';
     vm.stories = [];
     Story.getStories()

@@ -76,6 +76,7 @@ var notesController = function (io) {
                         notes.push(note);
                     });
 
+                    //create links for frontend navigation
                     function createLinks() {
                         var qs = require('querystring'),
                             baseUrl = '/api/notes';
@@ -100,7 +101,7 @@ var notesController = function (io) {
                             next = baseUrl + "?" + qs.stringify({tags: tags, offset: (offset + limit), limit: limit});
                             last = baseUrl + "?" + qs.stringify({
                                 tags: tags,
-                                offset: (totalCount - limit),
+                                offset: ((totalCount % limit) === 0 ? totalCount - limit : totalCount - (totalCount % limit)),
                                 limit: limit
                             });
                         }
@@ -125,7 +126,6 @@ var notesController = function (io) {
                 });
             });
     }
-
 
     //DELETE /api/notes delete all user notes
     function deleteAllUserNotes(req, res) {

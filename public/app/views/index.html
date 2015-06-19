@@ -19,10 +19,12 @@
     <!--Services-->
     <script type="text/javascript" src="app/services/authService.js"></script>
     <script type="text/javascript" src="app/services/storyService.js"></script>
+    <script type="text/javascript" src="app/services/notesService.js"></script>
     <script type="text/javascript" src="app/services/userService.js"></script>
     <!--Controllers-->
     <script type="text/javascript" src="app/controllers/userCtrl.js"></script>
     <script type="text/javascript" src="app/controllers/storyCtrl.js"></script>
+    <script type="text/javascript" src="app/controllers/notesCtrl.js"></script>
     <script type="text/javascript" src="app/controllers/mainCtrl.js"></script>
 
     <script type="text/javascript" src="app/app.routes.js"></script>
@@ -39,7 +41,7 @@
                 <li><a href="/users"></a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/allstories">All stories</a></li>
+                <li><a href="/notes">Notes</a></li>
                 <li ng-if="!main.loggedIn"><a href="/login">Login</a></li>
                 <li ng-if="!main.loggedIn"><a href="/signup">Signup</a></li>
                 <li ng-if="main.loggedIn"><a href="#">Hello {{main.user.username}}</a></li>

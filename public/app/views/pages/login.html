@@ -2,6 +2,7 @@
     <div class="row">
         <div class="col-sm-6 col-md-4 col-md-offset-4">
             <h1>Login</h1>
+            <div ng-if="login.hasError" class="alert alert-danger">{{login.error}}</div>
 
             <form class="form-signin" method="post" ng-submit="login.doLogin()">
                 <!--Username-->

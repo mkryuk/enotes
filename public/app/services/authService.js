@@ -57,6 +57,7 @@ authModule.factory('AuthToken', function ($window) {
 authModule.factory('AuthInterceptor', function ($q, $location, AuthToken) {
     var interceptorFactory = {};
 
+
     interceptorFactory.request = function (config) {
         var token = AuthToken.getToken();
         if (token) {

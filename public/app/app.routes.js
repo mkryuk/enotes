@@ -15,6 +15,9 @@ angular.module('appRoutes', ['ngRoute'])
             .when('/signup', {
                 templateUrl: 'app/views/pages/signup.html'
             })
+            .when('/notes', {
+                templateUrl: 'app/views/pages/notes.html'
+            })
             .when('/allstories', {
                 templateUrl: 'app/views/pages/allStories.html',
                 controller: 'AllStoriesController',
