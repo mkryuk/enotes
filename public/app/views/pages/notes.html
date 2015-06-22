@@ -2,41 +2,27 @@
     <div class="col-md-3">
 
     </div>
-    <div class="col-md-4" ng-controller="NotesController as notesCtrl">
-        <div class="row">
-            <!--<div class="panel panel-primary">-->
-                <!--<div class="panel-heading">Write your story</div>-->
-                <!--<div class="panel-body">-->
-                    <!--<form ng-submit="story.createStory()">-->
-                        <!--<input class="form-controll input-lg" type="text" name="story"-->
-                               <!--ng-model="story.storyData.content" placeholder="..." required="">-->
-                    <!--</form>-->
-                <!--</div>-->
-            <!--</div>-->
-            <div class="panel panel-success">
-                <div class="panel-heading">
-                    <form method="post" ng-submit="notesCtrl.findNotes()">
-                        <input type="search" class="form-control" placeholder="write tags here to find notes" ng-model="notesCtrl.stringToFind">
-                    </form>
-                </div>
-                <div class="panel-body" ng-repeat="item in notesCtrl.notes">
-                    <div>
-                        <div class="pull-left">{{item.data}}</div>
-                        <div>{{item.translation}}</div>
-                        <div class="pull-right">{{item.description}}</div>
-                        <div class="pull-right">{{item.tags}}</div>
+    <div class="col-md-4">
+        <div class="row" ng-controller="NotesController as vm">
+            <server-paginator uri="/api/notes/" limit="2" server-data="data" testme="moveNext()">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <form method="post" ng-submit="findNotes()">
+                            <input type="search" class="form-control" placeholder="write tags here to find notes"
+                                   ng-model="stringToFind">
+                        </form>
+                    </div>
+                    <div class="panel-body" ng-repeat="item in data.data.notes">
+                        <div>
+                            <div class="pull-left">{{item.data}}</div>
+                            <div>{{item.translation}}</div>
+                            <div class="pull-right">{{item.description}}</div>
+                            <div class="pull-right">{{item.tags}}</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <nav class="text-center">
-                <ul class="pagination">
-                    <li ng-class="{disabled:notesCtrl.links.first == null}"><a href="#" ng-click="notesCtrl.moveFirst()" >First</a></li>
-                    <li ng-class="{disabled:notesCtrl.links.prev == null}"><a href="#" ng-click="notesCtrl.movePrev()">&laquo;</a></li>
-                    <li ng-repeat="item in notesCtrl.pages()" ng-class="{active:notesCtrl.activePage == item}"><a href="#" ng-click="notesCtrl.getPageByNum(item)">{{item + 1}}</a></li>
-                    <li ng-class="{disabled:notesCtrl.links.next == null}"><a href="#" ng-click="notesCtrl.moveNext()">&raquo;</a></li>
-                    <li ng-class="{disabled:notesCtrl.links.last == null}"><a href="#" ng-click="notesCtrl.moveLast()">Last</a></li>
-                </ul>
-            </nav>
+                <button ng-click="testme()">Test</button>
+            </server-paginator>
         </div>
     </div>
     <div class="col-md-3">

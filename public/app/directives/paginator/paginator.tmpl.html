@@ -1,0 +1,20 @@
+<div ng-transclude></div>
+<nav class="text-center">
+    <ul class="pagination">
+        <li ng-class="{disabled:data.data.links.first == null}">
+            <a href="#" ng-click="moveFirst()">First</a>
+        </li>
+        <li ng-class="{disabled:data.data.links.prev == null}">
+            <a href="#" ng-click="movePrev()">&laquo;</a>
+        </li>
+        <li ng-repeat="item in pages" ng-class="{active:getActivePage() == item}">
+            <a href="#" ng-click="getPage(item)">{{item + 1}}</a>
+        </li>
+        <li ng-class="{disabled:data.data.links.next == null}">
+            <a href="#" ng-click="moveNext()">&raquo;</a>
+        </li>
+        <li ng-class="{disabled:data.data.links.last == null}">
+            <a href="#" ng-click="moveLast()">Last</a>
+        </li>
+    </ul>
+</nav>
