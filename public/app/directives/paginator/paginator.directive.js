@@ -4,7 +4,7 @@
 
     function serverPaginator(paginatorData) {
         var directive = {
-            scope: {data:'=serverData', test:'&testme'},
+            scope: {data:'=serverData'},
             restrict: 'E',
             transclude:true,
             templateUrl: "/app/directives/paginator/paginator.tmpl.html",
@@ -14,21 +14,24 @@
         //////////////////
 
         function link(scope, element, attrs, controller) {
-            console.log(controller);
             var uri = attrs.uri;
             var params = {
-                limit: attrs.limit || 20,
+                limit: attrs.limit || 20
             };
-            paginatorData.setParams(uri, params);
             scope.data = {};
-            scope.canNavigate = paginatorData.canNavigate;
+            scope.paginatorData = paginatorData;
+            scope.canNavigate = scope.paginatorData.canNavigate;
+
             scope.pages = [];
+            scope.paginatorData.setUri(uri);
+            scope.paginatorData.setParams(params);//activate() called here because of $watch
+
             //load the initial data
-            activate();
+            //activate();
             function activate() {
                 return loadData()
                     .then(function (data) {
-                        console.log('data loaded');
+                        //console.log('data loaded');
                     });
             }
 
@@ -39,43 +42,48 @@
 
             function updateData(data) {
                 scope.data = data;
-                scope.pages = paginatorData.pages();
-                scope.canNavigate = paginatorData.canNavigate;
+                scope.pages = scope.paginatorData.pages();
+                scope.canNavigate = scope.paginatorData.canNavigate;
             }
+
+            scope.$watch('paginatorData.shouldUpdate', function(){
+                if(scope.paginatorData.shouldUpdate)
+                {
+                    //reload the data
+                    activate();
+                    scope.paginatorData.shouldUpdate = false;
+                }
+            });
 
             ///end load data config///
 
             scope.moveNext = function () {
-                if (paginatorData.moveNext())
+                if (scope.paginatorData.moveNext())
                     loadData();
             };
 
-            scope.test = function(){
-                console.log("this is a test function");
-            };
-
             scope.movePrev = function () {
-                if (paginatorData.movePrev())
+                if (scope.paginatorData.movePrev())
                     loadData();
             };
 
             scope.moveFirst = function () {
-                if (paginatorData.moveFirst())
+                if (scope.paginatorData.moveFirst())
                     loadData();
             };
 
             scope.moveLast = function () {
-                if (paginatorData.moveLast())
+                if (scope.paginatorData.moveLast())
                     loadData();
             };
 
             scope.getPage = function (page) {
-                if (paginatorData.getPageByNum(page))
+                if (scope.paginatorData.getPageByNum(page))
                     loadData();
             };
 
             scope.getActivePage = function () {
-                return paginatorData.getActivePage();
+                return scope.paginatorData.getActivePage();
             };
         }
     }

@@ -6,6 +6,7 @@
 
         //exposed functions
         var factory = {
+            setUri: setUri,
             setParams: setParams,
             loadData: loadData,
             totalPages: totalPages,
@@ -18,6 +19,9 @@
             pages: pages,
             getActivePage: getActivePage
         };
+        //special $watch variable for directive controller
+        //to notify it that data has been changed
+        factory.shouldUpdate = false;
 
         //private params
         var totalItems = 0,
@@ -25,7 +29,7 @@
             visiblePageCount = 5,
             dataLoaded = false,
             from = 0,
-            to = from + visiblePageCount,
+            to = visiblePageCount,
             _uri = "",
             _params = {
                 offset: 0,
@@ -36,10 +40,22 @@
         return factory;
         ///////////////////////
 
-        function setParams(uri, params) {
+        function setUri(uri) {
             _uri = uri;
-            _params = params;
             dataLoaded = false;
+            //factory.shouldUpdate = true;
+        }
+
+        function setParams(params) {
+            //save the limit
+            var limit = params.limit || _params.limit;
+            _params = params;
+            //restore limit data and set offset to 0
+            setActivePage(0);
+            _params.limit = limit;
+            dataLoaded = false;
+            factory.shouldUpdate = true;
+            //TODO maybe should change dataLoaded var to factory.shouldUpdate for watching when to reload the data
         }
 
         function canNavigate() {
@@ -49,12 +65,23 @@
         function pages() {
             if (!dataLoaded) return [];
             var pages = [];
-            //if (to) is at it's end and active page is > than middle (from) should be vm. totalPages - visiblePageCount
-            if (to == totalPages() && factory.activePage >= totalPages() - Math.floor(visiblePageCount / 2)) {
-                from = totalPages() - visiblePageCount >= 0 ? totalPages() - visiblePageCount : 0;
-            } else {
-                from = activePage - Math.floor(visiblePageCount / 2) <= 0 ? 0 : activePage - Math.floor(visiblePageCount / 2);
+            var pagesFromCenter = Math.floor(visiblePageCount / 2);
+
+            //if we just start to navigate
+            if (activePage - pagesFromCenter <= 0) {
+                from = 0;
             }
+            //if we reach the end of pages we should not move the first
+            // otherwise it will be less than visiblePageCount items visible
+            else if (totalPages() - (activePage - pagesFromCenter) < visiblePageCount)
+            {
+                from = totalPages() - visiblePageCount;
+            }
+            //if we didn't reach the start or end of pages continue to move (from) value
+            else {
+                from = activePage - pagesFromCenter;
+            }
+
             to = from + visiblePageCount <= totalPages() - 1 ? from + visiblePageCount : totalPages();
             for (var i = from; i < to; i++) {
                 pages.push(i);
@@ -85,7 +112,6 @@
 
         function totalPages() {
             if (!dataLoaded) return 0;
-            //console.log(totalItems);
             return Math.ceil(totalItems / _params.limit);
         }
 
@@ -123,7 +149,7 @@
             return true;
         }
 
-        function getActivePage(){
+        function getActivePage() {
             if (!dataLoaded) return -1;
             return activePage;
         }

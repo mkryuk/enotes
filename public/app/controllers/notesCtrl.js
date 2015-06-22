@@ -4,24 +4,18 @@ angular.module("notesCtrl", ['notesService', 'paginatorService'])
 function NotesController(Notes, paginatorData) {
 
     var vm = this;
-    vm.someFung = function(){
-        console.log("testFunc");
-        test();
+    vm.stringToFind = "";
+    vm.params = {};
+
+    vm.findNotes = function(tags){
+        if (!tags.trim())
+            vm.params.tags = [];
+        else
+            vm.params.tags = tags.split(' ');
+        // set new params to find data
+        // it will activate the $watch in the server-paginator controller
+        paginatorData.setParams(vm.params);
+        vm.stringToFind = tags;
     };
-    //vm.data = paginatorData.data;
-    //console.log(vm.data);
-    //
-    //vm.loadData = loadData;
-    //
-    //function loadData() {
-    //    console.log("data");
-    //    return paginatorData.loadData()
-    //        .then(updateData);
-    //}
-    //
-    //function updateData(data) {
-    //    vm.data = data;
-    //    console.log(vm.data);
-    //}
 
 }

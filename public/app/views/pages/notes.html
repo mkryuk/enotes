@@ -4,24 +4,33 @@
     </div>
     <div class="col-md-4">
         <div class="row" ng-controller="NotesController as vm">
-            <server-paginator uri="/api/notes/" limit="2" server-data="data" testme="moveNext()">
+            <!--wrap the data in paginator directive-->
+            <server-paginator uri="/api/notes/" limit="5" server-data="data">
                 <div class="panel panel-success">
                     <div class="panel-heading">
-                        <form method="post" ng-submit="findNotes()">
+                        <form method="post" ng-submit="vm.findNotes(vm.stringToFind)">
                             <input type="search" class="form-control" placeholder="write tags here to find notes"
-                                   ng-model="stringToFind">
+                                   ng-model="vm.stringToFind">
                         </form>
                     </div>
-                    <div class="panel-body" ng-repeat="item in data.data.notes">
+                    <div class="list-group" ng-repeat="item in data.data.notes">
+                        <a href="#" class="list-group-item"></a>
+
                         <div>
-                            <div class="pull-left">{{item.data}}</div>
+                            <h4 class="list-group-item-heading">{{item.data}}</h4>
+
                             <div>{{item.translation}}</div>
-                            <div class="pull-right">{{item.description}}</div>
-                            <div class="pull-right">{{item.tags}}</div>
+                            <p class="list-group-item-text">{{item.description}}</p>
+
+                            <p class="list-group-item-text">
+                                <div ng-repeat="tag in item.tags">
+                                    <a href="#" ng-click="vm.findNotes(tag)">#{{tag}}</a>
+                                </div>
+                            </p>
+
                         </div>
                     </div>
                 </div>
-                <button ng-click="testme()">Test</button>
             </server-paginator>
         </div>
     </div>
