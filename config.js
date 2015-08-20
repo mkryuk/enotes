@@ -1,5 +1,5 @@
 module.exports = {
-    db: "mongodb://localhost/notes",
+    db: process.env.DB || "mongodb://localhost/notes",
     testDb: process.env.TESTDB || "mongodb://localhost/test",
     port: process.env.PORT || 8000,
     sslPort: process.env.SSLPORT || 8003,
