@@ -9,8 +9,8 @@ function MainController($rootScope, $location, Auth) {
     $rootScope.$on('$routeChangeStart', function () {
         vm.loggedIn = Auth.isLoggedIn()
         Auth.getUser()
-            .then(function (data) {
-                vm.user = data.data;
+            .then(function (response) {
+                vm.user = response.data;
             });
     });
 
@@ -18,20 +18,27 @@ function MainController($rootScope, $location, Auth) {
         vm.processing = true;
         vm.error = '';
         vm.hasError = false;
-        Auth.login(vm.loginData.username, vm.loginData.password)
-            .success(function (data) {
-                vm.processing = false;
-                Auth.getUser()
-                    .then(function (data) {
-                        vm.user = data.data;
-                    });
-                if (data.success) {
+
+
+        try {
+
+            Auth.login(vm.loginData.username, vm.loginData.password)
+                .then(function (response) {//success
+                    vm.processing = false;
+                    Auth.getUser()
+                        .then(function (response) {
+                            vm.user = response.data;
+                        });
                     $location.path('/');
-                } else {
-                    vm.error = data.message;
+                }, function (response) {//error
+                    vm.error = response.data.message;
                     vm.hasError = true;
-                }
-            });
+                });
+
+        } catch(error){
+            console.log("error here");
+        }
+
     };
 
     vm.doLogout = function () {

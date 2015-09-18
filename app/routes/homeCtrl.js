@@ -68,11 +68,11 @@ function login(req, res) {
     }).select('name username password').exec(function (err, user) {
         if (err) throw err;
         if (!user) {
-            res.send({message: "User doesn't exist"});
+            res.status(404).send({message: "User doesn't exist"});
         } else if (user) {
             var validPassword = user.comparePassword(req.body.password);
             if (!validPassword) {
-                res.send({message: "Invalid password"});
+                res.status(404).send({message: "Invalid password"});
             } else {
                 //Create token here
                 var token = createToken(user);
